@@ -1,6 +1,7 @@
 
 const express = require('express');
 const crypto = require('crypto');
+const fetch = require('node-fetch'); // لو Node أقل من v18
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -13,7 +14,7 @@ function normalizeIP(ip) {
 
 function escapeHTML(str) {
   if (!str) return '';
-  return str.replace(/[&<>"']/g, (m) => ({
+  return str.replace(/[&<>\"']/g, (m) => ({
     '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
   }[m]));
 }
@@ -37,7 +38,7 @@ app.get('/', async (req, res) => {
 
   if (!isLocal && clientIP) {
     try {
-      = await fetch(`https://ipapi.co/${clientIP}/json/`);
+      const response = await fetch(`https://ipapi.co/${clientIP}/json/`);
       if (response.ok) {
         const data = await response.json();
         ipGeo.city = data.city || null;
@@ -112,8 +113,6 @@ a { color: var(--accent); text-decoration:none; }
 <button class="btn" id="geoBtn">الحصول على إحداثياتي (المتصفح)</button>
 </div>
 <div id="map" class="map"></div>
-</div>
-</div>
 <script>
 function setText(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
 let map;
